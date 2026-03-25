@@ -12,7 +12,9 @@ import SwiftData
 struct G16_ShoppingListApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            NavigationStack {
+                ContentView()
+            }
         }
         .modelContainer(for: [Category.self, ShoppingItem.self])
     }
