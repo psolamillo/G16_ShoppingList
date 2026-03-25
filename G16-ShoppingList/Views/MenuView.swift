@@ -39,18 +39,21 @@ struct MenuView: View {
             VStack(spacing: 10) {
                 menuItem(
                     title: "Shopping List",
+                    destination: AnyView(ShoppingListView()),
                     subtitle: "View and manage your shopping items",
                     isSelected: selectedMenu == "Shopping List"
                 )
                 
                 menuItem(
                     title: "Manage Categories",
+                    destination: AnyView(ManageCategoriesView()),
                     subtitle: "Create and edit shopping categories",
                     isSelected: selectedMenu == "Manage Categories"
                 )
                 
                 menuItem(
                     title: "Tax Calculator",
+                    destination: AnyView(TotalCostView()),
                     subtitle: "Calculate total cost with tax",
                     isSelected: selectedMenu == "Tax Calculator"
                 )
@@ -63,10 +66,8 @@ struct MenuView: View {
     
     // subviews
     
-    private func menuItem(title: String, subtitle: String, isSelected: Bool) -> some View {
-        Button(action: {
-            selectedMenu = title
-        }) {
+    private func menuItem(title: String, destination: AnyView, subtitle: String, isSelected: Bool) -> some View {
+        NavigationLink(destination: destination) {
             HStack(spacing: 0) {
                 // selected indicator
                 if isSelected {
@@ -84,7 +85,6 @@ struct MenuView: View {
                         Text(title)
                             .font(.headline)
                             .foregroundColor(.white)
-                        
                         Text(subtitle)
                             .font(.footnote)
                             .foregroundColor(Color.white.opacity(0.7))
