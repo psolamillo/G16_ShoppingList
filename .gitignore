@@ -1,0 +1,6 @@
+xcuserdata/
+DerivedData/
+*.xccheckout
+*.moved-aside
+*.pbxuser
+*.xcuserstate
