@@ -1,6 +1,13 @@
 import SwiftUI
+import SwiftData
 
 struct ManageCategoriesView: View {
+    //  Database context for inserting/deleting
+    @Environment(\.modelContext) private var modelContext
+    
+    // Live query that updates the UI automatically when data changes
+    @Query(sort: \Category.name) private var categories: [Category]
+    
     let tealColor = Color(red: 0.31, green: 0.51, blue: 0.57)
     let coralColor = Color(red: 0.91, green: 0.38, blue: 0.29)
     let rowBackground = Color(red: 0.93, green: 0.92, blue: 0.96)
@@ -8,27 +15,19 @@ struct ManageCategoriesView: View {
 
     @State private var newCategory: String = ""
 
-    //Example data to match the screenshots
-    let categories = ["Food", "Medication", "Cleaning Supplies", "Personal Care"]
-
     var body: some View {
         VStack(spacing: 0) {
             
+            // Header
             ZStack {
                 HStack {
                     Button(action: {
-                        
+                        // back navigation
                     }) {
                         Image(systemName: "arrow.left")
                             .foregroundColor(.white)
                     }
                     Spacer()
-                    Button(action: {
-                        
-                    }) {
-                        Image(systemName: "plus")
-                            .foregroundColor(.white)
-                    }
                 }
 
                 Text("Manage Categories")
@@ -39,15 +38,19 @@ struct ManageCategoriesView: View {
             .padding()
             .background(tealColor)
 
-            VStack(spacing: 0) {
-                ForEach(categories, id: \.self) { category in
-                    categoryRow(name: category)
-                    Divider()
+            // Dynamic List from Database
+            ScrollView {
+                VStack(spacing: 0) {
+                    ForEach(categories) { category in
+                        categoryRow(category: category)
+                        Divider()
+                    }
                 }
+                .background(rowBackground)
             }
-            .background(rowBackground)
             .padding(.bottom, 16)
 
+            // Add New Category Section
             VStack(alignment: .leading, spacing: 12) {
                 Text("Add New Category")
                     .font(.headline)
@@ -65,7 +68,7 @@ struct ManageCategoriesView: View {
                         )
 
                     Button(action: {
-                        
+                        addCategory()
                     }) {
                         Text("Add")
                             .fontWeight(.bold)
@@ -75,6 +78,8 @@ struct ManageCategoriesView: View {
                             .background(tealColor)
                             .cornerRadius(8)
                     }
+                    // Disable button if text is empty
+                    .disabled(newCategory.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
             }
             .padding()
@@ -83,18 +88,25 @@ struct ManageCategoriesView: View {
         }
         .background(Color.white.ignoresSafeArea())
     }
-
-    // subviews
     
-    private func categoryRow(name: String) -> some View {
+    private func addCategory() {
+        let name = newCategory.trimmingCharacters(in: .whitespaces)
+        if !name.isEmpty {
+            let category = Category(name: name)
+            modelContext.insert(category) // Saves to database
+            newCategory = "" // Clears input
+        }
+    }
+    
+    private func categoryRow(category: Category) -> some View {
         HStack {
-            Text(name)
+            Text(category.name)
                 .foregroundColor(.black)
 
             Spacer()
 
             Button(action: {
-                //
+                modelContext.delete(category) // Removes from database
             }) {
                 Text("Delete")
                     .font(.subheadline)
@@ -113,4 +125,5 @@ struct ManageCategoriesView: View {
 
 #Preview {
     ManageCategoriesView()
+        .modelContainer(for: Category.self, inMemory: true)
 }
