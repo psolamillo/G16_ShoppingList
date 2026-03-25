@@ -1,0 +1,104 @@
+import SwiftUI
+
+struct AddItemView: View {
+    let tealColor = Color(red: 0.31, green: 0.51, blue: 0.57)
+    let lightPurple = Color(red: 0.91, green: 0.90, blue: 0.94)
+    let borderColor = Color(red: 0.89, green: 0.87, blue: 0.92)
+    
+    @State private var itemName: String = ""
+    @State private var price: String = ""
+    @State private var quantity: String = ""
+    @State private var category: String = ""
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            ZStack {
+                HStack {
+                    Button(action: {
+                        //
+                    }) {
+                        Text("Cancel")
+                            .font(.subheadline) 
+                            .foregroundColor(.white)
+                    }
+                    Spacer()
+                }
+                
+                Text("Add Item")
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+            }
+            .padding()
+            .background(tealColor)
+            
+            ScrollView {
+
+                VStack(alignment: .leading, spacing: 20) {
+                    
+                    inputField(title: "Item Name", placeholder: "Enter item name", text: $itemName)
+                    
+                    inputField(title: "Price", placeholder: "00", text: $price, alignment: .trailing)
+                    
+                    inputField(title: "Quantity", placeholder: "Enter quantity", text: $quantity)
+                    
+                    inputField(title: "Category", placeholder: "Select a category", text: $category)
+                    
+                    HStack(spacing: 16) {
+                        Button(action: {
+                            // Cancel action
+                        }) {
+                            Text("Cancel")
+                                .fontWeight(.bold)
+                                .foregroundColor(.black)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(lightPurple)
+                                .cornerRadius(8)
+                        }
+                        
+                        Button(action: {
+                            // Save action
+                        }) {
+                            Text("Save")
+                                .fontWeight(.bold)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(tealColor)
+                                .cornerRadius(8)
+                        }
+                    }
+                    .padding(.top, 10)
+                }
+                .padding()
+            }
+        }
+        .background(Color.white.ignoresSafeArea())
+    }
+    
+    // subviews
+    
+    private func inputField(title: String, placeholder: String, text: Binding<String>, alignment: TextAlignment = .leading) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .font(.subheadline)
+                .fontWeight(.bold)
+                .foregroundColor(Color(white: 0.2)) 
+            
+            TextField(placeholder, text: text)
+                .multilineTextAlignment(alignment)
+                .padding()
+                .background(Color.white)
+                .cornerRadius(8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(borderColor, lineWidth: 1)
+                )
+        }
+    }
+}
+
+#Preview {
+    AddItemView()
+}
