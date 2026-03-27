@@ -67,14 +67,19 @@ struct ShoppingListView: View {
                         
                         // Global Grand Total
                         let grandTotal = allItems.reduce(0) { $0 + ($1.price * Double($1.quantity)) }
-                        HStack {
-                            Spacer()
-                            Text("Total: \(String(format: "$%.2f", grandTotal))")
-                                .font(.title3)
-                                .fontWeight(.bold)
+                        NavigationLink(destination: TotalCostView()){
+                            HStack {
+                                Spacer()
+                                Text("Total: \(String(format: "$%.2f", grandTotal))")
+                                    .font(.title3)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.black)
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.gray)
+                            }
+                            .padding()
+                            .background(Color.white)
                         }
-                        .padding()
-                        .background(Color.white)
                     }
                 }
             }
