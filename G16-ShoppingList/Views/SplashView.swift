@@ -12,7 +12,7 @@ struct ContentView: View {
     
     var body: some View {
         if isActive {
-            MenuView()
+            ShoppingListView()
         } else {
             ZStack {
                 Color(red: 0.31, green: 0.51, blue: 0.57)

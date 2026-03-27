@@ -19,10 +19,11 @@ struct ShoppingListView: View {
             VStack(spacing: 0) {
                 // Header
                 HStack(spacing: 16) {
-                    Image(systemName: "line.3.horizontal")
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                    
+                    NavigationLink(destination: MenuView()){
+                        Image(systemName: "line.3.horizontal")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                    }
                     Text("Shopping List")
                         .font(.title3)
                         .fontWeight(.semibold)
