@@ -15,70 +15,74 @@ struct ShoppingListView: View {
     let darkerGray = Color(white: 0.85)
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Header
-            HStack(spacing: 16) {
-                Image(systemName: "line.3.horizontal")
-                    .font(.title2)
-                    .fontWeight(.semibold)
+        NavigationStack{
+            VStack(spacing: 0) {
+                // Header
+                HStack(spacing: 16) {
+                    Image(systemName: "line.3.horizontal")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                    
+                    Text("Shopping List")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                    
+                    Spacer()
+                }
+                .foregroundColor(.white)
+                .padding()
+                .background(tealColor)
                 
-                Text("Shopping List")
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                
-                Spacer()
-            }
-            .foregroundColor(.white)
-            .padding()
-            .background(tealColor)
-            
-            ScrollView {
-                VStack(spacing: 0) {
-                    //  Group items by their Category
-                    ForEach(categories) { category in
-                        let categoryItems = allItems.filter { $0.categoryName == category.name }
-                        
-                        categoryHeader(title: category.name)
-                        
-                        // List the actual items saved in this category
-                        ForEach(categoryItems) { item in
-                            listItem(
-                                title: item.name,
-                                price: String(format: "$%.2f", item.price),
-                                quantity: item.quantity
-                            )
+                ScrollView {
+                    VStack(spacing: 0) {
+                        //  Group items by their Category
+                        ForEach(categories) { category in
+                            let categoryItems = allItems.filter { $0.categoryName == category.name }
+                            
+                            NavigationLink(destination: TotalCostView()){
+                                categoryHeader(title: category.name)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            // List the actual items saved in this category
+                            ForEach(categoryItems) { item in
+                                listItem(
+                                    title: item.name,
+                                    price: String(format: "$%.2f", item.price),
+                                    quantity: item.quantity
+                                )
+                            }
+                            
+                            // Add Item Button inside the category
+                            Button(action: { showingAddItem = true }) {
+                                addItemButton()
+                            }
+                            
+                            // Category Subtotal
+                            let subtotal = categoryItems.reduce(0) { $0 + ($1.price * Double($1.quantity)) }
+                            subtotalRow(amount: String(format: "$%.2f", subtotal))
                         }
                         
-                        // Add Item Button inside the category
-                        Button(action: { showingAddItem = true }) {
-                            addItemButton()
-                        }
+                        Divider()
+                            .padding(.vertical, 8)
                         
-                        // Category Subtotal
-                        let subtotal = categoryItems.reduce(0) { $0 + ($1.price * Double($1.quantity)) }
-                        subtotalRow(amount: String(format: "$%.2f", subtotal))
+                        // Global Grand Total
+                        let grandTotal = allItems.reduce(0) { $0 + ($1.price * Double($1.quantity)) }
+                        HStack {
+                            Spacer()
+                            Text("Total: \(String(format: "$%.2f", grandTotal))")
+                                .font(.title3)
+                                .fontWeight(.bold)
+                        }
+                        .padding()
+                        .background(Color.white)
                     }
-                    
-                    Divider()
-                        .padding(.vertical, 8)
-                    
-                    // Global Grand Total
-                    let grandTotal = allItems.reduce(0) { $0 + ($1.price * Double($1.quantity)) }
-                    HStack {
-                        Spacer()
-                        Text("Total: \(String(format: "$%.2f", grandTotal))")
-                            .font(.title3)
-                            .fontWeight(.bold)
-                    }
-                    .padding()
-                    .background(Color.white)
                 }
             }
-        }
-        .background(Color.white.ignoresSafeArea())
-        // Present the Add Item screen as a sheet
-        .sheet(isPresented: $showingAddItem) {
-            AddItemView()
+            .background(Color.white.ignoresSafeArea())
+            // Present the Add Item screen as a sheet
+            .sheet(isPresented: $showingAddItem) {
+                AddItemView()
+            }
         }
     }
     
