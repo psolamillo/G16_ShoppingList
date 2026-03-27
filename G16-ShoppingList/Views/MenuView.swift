@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct MenuView: View {
+    @Environment(\.dismiss) private var dismiss
     let tealColor = Color(red: 0.31, green: 0.51, blue: 0.57)
     let coralColor = Color(red: 0.91, green: 0.38, blue: 0.29)
     let lightTeal = Color.white.opacity(0.15)
@@ -13,6 +14,7 @@ struct MenuView: View {
             ZStack {
                 HStack {
                     Button(action: {
+                        dismiss()
                 
                     }) {
                         Image(systemName: "arrow.left")

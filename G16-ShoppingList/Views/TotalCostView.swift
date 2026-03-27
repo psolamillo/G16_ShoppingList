@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct TotalCostView: View {
+    @Environment(\.dismiss) private var dismiss
     // Fetch all items currently in the database
     @Query private var items: [ShoppingItem]
     
@@ -33,6 +34,7 @@ struct TotalCostView: View {
             ZStack {
                 HStack {
                     Button(action: {
+                        dismiss()
                     }) {
                         Image(systemName: "arrow.left")
                             .foregroundColor(.white)
