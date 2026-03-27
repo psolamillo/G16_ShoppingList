@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct ShoppingListView: View {
+    @State private var itemToEdit: ShoppingItem? = nil
     // Database access and state
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \ShoppingItem.name) private var allItems: [ShoppingItem]
@@ -46,11 +47,16 @@ struct ShoppingListView: View {
                             .buttonStyle(PlainButtonStyle())
                             // List the actual items saved in this category
                             ForEach(categoryItems) { item in
-                                listItem(
-                                    title: item.name,
-                                    price: String(format: "$%.2f", item.price),
-                                    quantity: item.quantity
-                                )
+                                Button(action: {
+                                    itemToEdit = item
+                                }) {
+                                    listItem(
+                                        title: item.name,
+                                        price: String(format: "$%.2f", item.price),
+                                        quantity: item.quantity
+                                    )
+                                    .buttonStyle(PlainButtonStyle())
+                                }
                             }
                             
                             // Add Item Button inside the category
@@ -85,6 +91,9 @@ struct ShoppingListView: View {
                 }
             }
             .background(Color.white.ignoresSafeArea())
+            .sheet(item: $itemToEdit) { item in
+                AddItemView(itemToEdit: item)
+            }
             // Present the Add Item screen as a sheet
             .sheet(isPresented: $showingAddItem) {
                 AddItemView()
@@ -132,6 +141,12 @@ struct ShoppingListView: View {
                     .font(.title3)
                     .fontWeight(.bold)
                     .foregroundColor(.black)
+                
+                Image(systemName: "chevron.right")
+                    .font(.footnote)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.gray.opacity(0.5))
+                    .padding(.leading, 8)
             }
             .padding()
             .background(lightGray)

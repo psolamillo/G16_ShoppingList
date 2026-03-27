@@ -6,6 +6,8 @@ struct AddItemView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     
+    var itemToEdit: ShoppingItem? = nil
+    
     // Fetch categories from database so the user can select one
     @Query(sort: \Category.name) private var categories: [Category]
     
@@ -32,7 +34,7 @@ struct AddItemView: View {
                     Spacer()
                 }
                 
-                Text("Add Item")
+                Text(itemToEdit == nil ? "Add Item" : "Edit Item")
                     .font(.headline)
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
@@ -91,7 +93,7 @@ struct AddItemView: View {
                           Button(action: {
                               saveItem() // Trigger the database save
                           }) {
-                              Text("Save")
+                              Text(itemToEdit == nil ? "Save" : "Update")
                                   .fontWeight(.bold)
                                   .foregroundColor(.white)
                                   .frame(maxWidth: .infinity)
@@ -108,6 +110,14 @@ struct AddItemView: View {
               }
           }
           .background(Color.white.ignoresSafeArea())
+          .onAppear{
+              if let item = itemToEdit{
+                  itemName = item.name
+                  price = String(format: "%.2f", item.price)
+                  quantity = "\(item.quantity)"
+                  selectedCategory = item.categoryName
+              }
+          }
       }
     
      private func saveItem() {
@@ -116,15 +126,23 @@ struct AddItemView: View {
          let itemQty = Int(quantity) ?? 1
          
          // Create the model instance
-         let newItem = ShoppingItem(
-             name: itemName,
-             price: itemPrice,
-             quantity: itemQty,
-             categoryName: selectedCategory
-         )
-         
-         // Insert into SwiftData context
-         modelContext.insert(newItem)
+         if let item = itemToEdit{
+             item.name = itemName
+             item.price = itemPrice
+             item.quantity = itemQty
+             item.categoryName = selectedCategory
+             
+         }else {
+             let newItem = ShoppingItem(
+                name: itemName,
+                price: itemPrice,
+                quantity: itemQty,
+                categoryName: selectedCategory
+             )
+             
+             // Insert into SwiftData context
+             modelContext.insert(newItem)
+         }
          
          // Close the view
          dismiss()
