@@ -100,6 +100,21 @@ struct ManageCategoriesView: View {
         }
     }
     
+    private func deleteCategory(_ category: Category) {
+        // Fetch all items
+        let descriptor = FetchDescriptor<ShoppingItem>()
+        
+        if let items = try? modelContext.fetch(descriptor) {
+            // Delete items that belong to this category
+            for item in items where item.categoryName == category.name {
+                modelContext.delete(item)
+            }
+        }
+        
+        // Delete the category itself
+        modelContext.delete(category)
+    }
+    
     private func categoryRow(category: Category) -> some View {
         HStack {
             Text(category.name)
@@ -108,7 +123,7 @@ struct ManageCategoriesView: View {
             Spacer()
 
             Button(action: {
-                modelContext.delete(category) // Removes from database
+                deleteCategory(category)
             }) {
                 Text("Delete")
                     .font(.subheadline)

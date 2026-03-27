@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct TotalCostView: View {
+    var selectedCategory: String? = nil
     @Environment(\.dismiss) private var dismiss
     // Fetch all items currently in the database
     @Query private var items: [ShoppingItem]
@@ -9,20 +10,31 @@ struct TotalCostView: View {
     @State private var taxRate: String = "13"
     
     // Compute the Subtotal by summing all items (Price * Quantity)
+    var filteredItems: [ShoppingItem] {
+        if let selectedCategory {
+            return items.filter { $0.categoryName == selectedCategory }
+        }
+        return items
+    }
+    
     var subtotal: Double {
-        items.reduce(0) { $0 + ($1.price * Double($1.quantity)) }
+        filteredItems.reduce(0) { $0 + ($1.price * Double($1.quantity)) }
     }
     
     // Calculate Tax based on the user-inputted rate
     var taxAmount: Double {
-        let rate = Double(taxRate) ?? 0.0
+        let rate = Double(taxRate) ?? 13.0
         return subtotal * (rate / 100.0)
     }
+    
     
     // Final Total
     var totalCost: Double {
         subtotal + taxAmount
     }
+    
+ 
+
 
     let tealColor = Color(red: 0.31, green: 0.51, blue: 0.57)
     let lightPurple = Color(red: 0.91, green: 0.90, blue: 0.94)
@@ -83,7 +95,7 @@ struct TotalCostView: View {
                         
                         // Final Total Cost
                         HStack {
-                            Text("Total Cost")
+                            Text(selectedCategory ?? "Total Cost")
                                 .fontWeight(.bold)
                             Spacer()
                             Text(String(format: "$%.2f", totalCost))

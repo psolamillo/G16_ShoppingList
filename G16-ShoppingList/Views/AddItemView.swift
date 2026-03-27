@@ -77,34 +77,50 @@ struct AddItemView: View {
                          )
                      }
                      
-                      HStack(spacing: 16) {
-                          Button(action: {
-                              dismiss()
-                          }) {
-                              Text("Cancel")
-                                  .fontWeight(.bold)
-                                  .foregroundColor(.black)
-                                  .frame(maxWidth: .infinity)
-                                  .padding()
-                                  .background(lightPurple)
-                                  .cornerRadius(8)
-                          }
-                          
-                          Button(action: {
-                              saveItem() // Trigger the database save
-                          }) {
-                              Text(itemToEdit == nil ? "Save" : "Update")
-                                  .fontWeight(.bold)
-                                  .foregroundColor(.white)
-                                  .frame(maxWidth: .infinity)
-                                  .padding()
-                                  .background(tealColor)
-                                  .cornerRadius(8)
-                          }
-                          // Validation: Disable button if fields are empty
-                          .disabled(itemName.isEmpty || price.isEmpty || selectedCategory.isEmpty)
-                      }
-                      .padding(.top, 10)
+                     VStack(spacing: 12) {
+                         HStack(spacing: 16) {
+                             Button(action: {
+                                 dismiss()
+                             }) {
+                                 Text("Cancel")
+                                     .fontWeight(.bold)
+                                     .foregroundColor(.black)
+                                     .frame(maxWidth: .infinity)
+                                     .padding()
+                                     .background(lightPurple)
+                                     .cornerRadius(8)
+                             }
+                             
+                             Button(action: {
+                                 saveItem()
+                             }) {
+                                 Text(itemToEdit == nil ? "Save" : "Update")
+                                     .fontWeight(.bold)
+                                     .foregroundColor(.white)
+                                     .frame(maxWidth: .infinity)
+                                     .padding()
+                                     .background(tealColor)
+                                     .cornerRadius(8)
+                             }
+                             .disabled(itemName.isEmpty || price.isEmpty || selectedCategory.isEmpty)
+                         }
+
+                         // ✅ DELETE BUTTON (only when editing)
+                         if itemToEdit != nil {
+                             Button(action: {
+                                 deleteItem()
+                             }) {
+                                 Text("Delete Item")
+                                     .fontWeight(.bold)
+                                     .foregroundColor(.white)
+                                     .frame(maxWidth: .infinity)
+                                     .padding()
+                                     .background(Color.red)
+                                     .cornerRadius(8)
+                             }
+                         }
+                     }
+                     .padding(.top, 10)
                   }
                   .padding()
               }
@@ -147,6 +163,13 @@ struct AddItemView: View {
          // Close the view
          dismiss()
      }
+    
+    private func deleteItem() {
+        if let item = itemToEdit {
+            modelContext.delete(item)
+            dismiss()
+        }
+    }
      
      private func inputField(title: String, placeholder: String, text: Binding<String>, alignment: TextAlignment = .leading) -> some View {
          VStack(alignment: .leading, spacing: 8) {

@@ -41,7 +41,7 @@ struct ShoppingListView: View {
                         ForEach(categories) { category in
                             let categoryItems = allItems.filter { $0.categoryName == category.name }
                             
-                            NavigationLink(destination: TotalCostView()){
+                            NavigationLink(destination: TotalCostView(selectedCategory: category.name)){
                                 categoryHeader(title: category.name)
                             }
                             .buttonStyle(PlainButtonStyle())
