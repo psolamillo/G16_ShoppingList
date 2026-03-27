@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct ManageCategoriesView: View {
+    @Environment(\.dismiss) private var dismiss
     //  Database context for inserting/deleting
     @Environment(\.modelContext) private var modelContext
     
@@ -23,6 +24,7 @@ struct ManageCategoriesView: View {
                 HStack {
                     Button(action: {
                         // back navigation
+                        dismiss()
                     }) {
                         Image(systemName: "arrow.left")
                             .foregroundColor(.white)
